@@ -1,0 +1,9 @@
+*.iml
+bin
+.gradle/
+build/
+junit_report.xml
+logs/
+soapui-errors.log
+soapui.log
+

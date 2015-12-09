@@ -23,16 +23,20 @@ public class Presenter {
     static void logRequestDetails(TestCase testCase) {
         logger.debug("logRequestDetails() entering for testCase: {}", testCase.getLabel());
 
-        // TODO - should creating list of the subclass HttpRequestTestSteps to avoid casting when using entries
-        List<TestStep> httpRequestTestSteps = testCase.getTestStepList()
-            .stream()
-            .filter(t -> HttpRequestTestStep.class.isAssignableFrom(t.getClass()))
-            .collect(Collectors.toList());
+        // TODO - should create list of the subclass HttpRequestTestSteps to avoid casting when using entries
+        List<TestStep> httpRequestTestSteps = extractHttpRequestTestStepsFrom(testCase);
 
         for (TestStep httpRequestTestStep : httpRequestTestSteps) {
             logRequestDetails((HttpRequestTestStep)httpRequestTestStep);
             logAssertionDetails((HttpRequestTestStep) httpRequestTestStep);
         }
+    }
+
+    private static List<TestStep> extractHttpRequestTestStepsFrom(TestCase testCase) {
+        return testCase.getTestStepList()
+            .stream()
+            .filter(t -> HttpRequestTestStep.class.isAssignableFrom(t.getClass()))
+            .collect(Collectors.toList());
     }
 
     private static <T extends HttpRequestTestStep> void logRequestDetails(T httpRequestTestStep) {
@@ -70,9 +74,13 @@ public class Presenter {
     }
 
     static void logResponseContent(TestCase testCase) {
-        for (RestTestRequestStep step : testCase.getTestStepsOfType(RestTestRequestStep.class)) {
+
+        // TODO - should create list of the subclass HttpRequestTestSteps to avoid casting when using entries
+        List<TestStep> httpRequestTestSteps = extractHttpRequestTestStepsFrom(testCase);
+
+        for (TestStep testStep : httpRequestTestSteps) {
             try {
-                AbstractHttpRequest<?> httpRequest = step.getHttpRequest();
+                AbstractHttpRequest<?> httpRequest = ((HttpRequestTestStep)testStep).getHttpRequest();
                 logger.debug("ResponseContent:\n" + httpRequest.getResponse().getContentAsString());
             } catch (NullPointerException npe) {
                 logger.debug("logResponseContent() - Unable to find Response Content, looks like a problem occured");

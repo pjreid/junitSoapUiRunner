@@ -44,7 +44,9 @@ public class SoapUiTestCaseRunner {
         
         for (TestSuite testSuite : testSuiteList) {
             for (TestCase testCase : testSuite.getTestCaseList()) {
-                params.add(new Object[] { testCase, testCase.getLabel() });
+		if(!testCase.isDisabled()){
+                	params.add(new Object[] { testCase, testCase.getLabel() });
+		}
             }
         }
         return params;
